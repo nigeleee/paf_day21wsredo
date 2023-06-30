@@ -2,6 +2,7 @@ package sg.edu.nus.iss.paf_day21wsredo.service;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +24,8 @@ public class CustomerService {
         return custRepo.getAllCustomersLimitOffset(limit, offset);
     }
 
-    public Customers findCustomerById(Integer id) {
-    
+    public Customers findCustomerById(int id) {
+
         return custRepo.findCustomerById(id);
     }
 

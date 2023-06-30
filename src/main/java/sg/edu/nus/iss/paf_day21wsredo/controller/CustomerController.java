@@ -1,17 +1,21 @@
 package sg.edu.nus.iss.paf_day21wsredo.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import sg.edu.nus.iss.paf_day21wsredo.models.Customers;
 import sg.edu.nus.iss.paf_day21wsredo.models.Orders;
+import sg.edu.nus.iss.paf_day21wsredo.repository.CustomersRepo;
 import sg.edu.nus.iss.paf_day21wsredo.service.CustomerService;
 
 @RestController
@@ -51,28 +55,49 @@ public class CustomerController {
     // }
 
 
-    @GetMapping(path = "/customer/{id}", produces = "application/json")
-    public ResponseEntity<Customers> findCustomerById(@PathVariable Integer id) {
+    @GetMapping(path = "/customers/{id}", produces = "application/json")
+    public ResponseEntity<?> findCustomerById(@PathVariable Integer id) {
         
-        Customers result = custSvc.findCustomerById(id);
+        try {
+            
+            Customers result = custSvc.findCustomerById(id);
+            return ResponseEntity.ok().body(result);
 
-    if (result != null) {
-        return ResponseEntity.ok().body(result);
-    } else {
-        return ResponseEntity.notFound().build();
-    }
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
+        }
 
-    }
+    }    
+    //     Customers result = custSvc.findCustomerById(id);
+
+    // if (result != null) {
+    //     return ResponseEntity.ok().body(result);
+    // } else {
+    //     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer with ID " + id + " does not exist!");
+    // }
+
+    // }
 
     @GetMapping(path="/customers/{id}/orders", produces = "application/json")
-    public ResponseEntity<List<Orders>> findOrdersByCustomerID(@PathVariable Integer id) {
-        
-        List<Orders> result = custSvc.findOrdersByCustomerID(id);
+    public ResponseEntity<?> findOrdersByCustomerID(@PathVariable Integer id) {
+        try {
+          
+          List<Orders> result = custSvc.findOrdersByCustomerID(id);
+          return ResponseEntity.ok().body(result);
 
-        if(result != null) {
-            return ResponseEntity.ok().body(result);
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (NoSuchElementException e) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\": \"" + e.getMessage() + "\"}");
+
         }
+    //     List<Orders> result = custSvc.findOrdersByCustomerID(id);
+
+    //     if(result != null) {
+    //         return ResponseEntity.ok().body(result);
+    //     } else {
+    //         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer with ID " + id + " does not exist!");
+    //     }
+    // }
     }
+
 }
